@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -74,7 +73,9 @@ Deno.serve(async (req) => {
 });
 
 function generatePhoneNumber(countryCode: string): string {
+  // Enhanced country prefixes with more countries
   const countryPrefixes: { [key: string]: { prefix: string; format: () => string } } = {
+    // ... keep existing code (all the country formatting functions)
     US: {
       prefix: '+1',
       format: () => {
@@ -142,17 +143,20 @@ function generatePhoneNumber(countryCode: string): string {
         const number = Math.floor(Math.random() * 999999999).toString().padStart(9, '0');
         return `+91 ${first}${number}`;
       }
+    },
+    // Add default format for all other countries
+    DEFAULT: {
+      prefix: '+1',
+      format: () => {
+        const area = Math.floor(Math.random() * (999 - 200) + 200);
+        const exchange = Math.floor(Math.random() * (999 - 200) + 200);
+        const number = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+        return `+1 (${area}) ${exchange}-${number}`;
+      }
     }
   };
 
-  const country = countryPrefixes[countryCode];
-  if (!country) {
-    const area = Math.floor(Math.random() * (999 - 200) + 200);
-    const exchange = Math.floor(Math.random() * (999 - 200) + 200);
-    const number = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
-    return `+1 (${area}) ${exchange}-${number}`;
-  }
-
+  const country = countryPrefixes[countryCode] || countryPrefixes.DEFAULT;
   return country.format();
 }
 
@@ -163,6 +167,9 @@ async function simulateMessage(supabase: any, phoneNumberId: string) {
     { from: '+5555555555', content: 'Your OTP is 789012. Valid for 5 minutes.' },
     { from: '+1111111111', content: 'Thank you for signing up! Please confirm your email address.' },
     { from: '+2222222222', content: 'Security alert: New login detected from Chrome browser.' },
+    { from: '+3333333333', content: 'Your password reset code is: 456789' },
+    { from: '+4444444444', content: 'Verification successful! Welcome to our service.' },
+    { from: '+6666666666', content: 'Your booking confirmation code: ABC123' },
   ];
   
   const randomMessage = sampleMessages[Math.floor(Math.random() * sampleMessages.length)];
