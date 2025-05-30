@@ -1,11 +1,20 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import PhoneGenerator from '../components/PhoneGenerator';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Disposable Phone Numbers
+          </h1>
+          <p className="text-lg text-gray-600">
+            Generate temporary phone numbers that expire in 1 hour. Perfect for SMS verification.
+          </p>
+        </div>
+        <PhoneGenerator />
       </div>
     </div>
   );
