@@ -316,111 +316,128 @@ const PhoneGenerator = () => {
   const selectedCountryData = countries.find(c => c.code === selectedCountry);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      {/* Generator Card */}
-      <Card className="shadow-xl border-0 bg-gradient-to-br from-white via-blue-50 to-purple-50">
-        <CardHeader className="text-center pb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-t-lg text-white">
-          <CardTitle className="flex items-center justify-center gap-3 text-3xl font-bold">
-            <Phone className="h-8 w-8 text-white" />
-            Generate Temporary Phone Number
-          </CardTitle>
-          <p className="text-blue-100 mt-2 text-lg">Get a disposable phone number that expires in 1 hour</p>
-        </CardHeader>
-        <CardContent className="space-y-8 p-8">
-          <div className="flex flex-col sm:flex-row gap-6 items-end">
-            <div className="flex-1">
-              <label className="block text-sm font-bold text-gray-700 mb-3">
-                Select Country
-              </label>
-              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                <SelectTrigger className="w-full h-12 text-lg border-2 border-purple-200 focus:border-purple-500 bg-white shadow-md rounded-lg">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="max-h-60 bg-white border-purple-200">
-                  {countries.map((country) => (
-                    <SelectItem key={country.code} value={country.code} className="text-lg py-3 hover:bg-purple-50">
-                      {country.name} ({country.prefix})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <Button 
-              onClick={handleGenerateNumber} 
-              disabled={isGenerating}
-              className="w-full sm:w-auto px-10 h-12 text-lg bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 hover:from-purple-700 hover:via-pink-700 hover:to-red-600 text-white font-bold shadow-lg transform transition-all duration-200 hover:scale-105"
-            >
-              {isGenerating ? (
-                <>
-                  <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                'Generate Number'
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Generated Number Display */}
-      {generatedNumber && (
-        <Card className="shadow-xl border-0 bg-gradient-to-br from-white via-green-50 to-blue-50">
-          <CardHeader className="bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 rounded-t-lg text-white">
-            <CardTitle className="flex items-center justify-between">
-              <span className="text-xl font-bold">Your Temporary Number</span>
-              <Badge variant="outline" className="bg-white text-green-600 border-white px-4 py-1 font-bold">
-                ✅ Active
-              </Badge>
+    <div className="container mx-auto px-4 py-6">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          Disposable Phone Numbers
+        </h1>
+        <p className="text-lg sm:text-xl text-gray-700 max-w-xl mx-auto leading-relaxed">
+          Generate temporary phone numbers from any country that expire in 1 hour. Perfect for SMS verification 
+          and protecting your privacy online.
+        </p>
+        <div className="flex justify-center mt-4 flex-wrap gap-2">
+          <span className="px-3 py-2 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold">🌍 Worldwide</span>
+          <span className="px-3 py-2 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold">⚡ Instant</span>
+          <span className="px-3 py-2 bg-pink-100 text-pink-700 rounded-full text-xs sm:text-sm font-semibold">🔒 Private</span>
+        </div>
+      </div>
+      
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Generator Card */}
+        <Card className="shadow-xl border-0 bg-gradient-to-br from-white via-blue-50 to-purple-50">
+          <CardHeader className="text-center pb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-t-lg text-white">
+            <CardTitle className="flex items-center justify-center gap-3 text-3xl font-bold">
+              <Phone className="h-8 w-8 text-white" />
+              Generate Temporary Phone Number
             </CardTitle>
+            <p className="text-blue-100 mt-2 text-lg">Get a disposable phone number that expires in 1 hour</p>
           </CardHeader>
-          <CardContent className="space-y-6 p-8">
-            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-gray-50 via-blue-50 to-purple-50 rounded-xl border-2 border-blue-200 shadow-md">
-              <div>
-                <div className="text-3xl font-mono font-bold text-gray-900 mb-2">
-                  {generatedNumber.number}
-                </div>
-                <div className="text-lg text-purple-600 font-semibold">
-                  {selectedCountryData?.name} ({selectedCountryData?.prefix})
-                </div>
+          <CardContent className="space-y-8 p-8">
+            <div className="flex flex-col sm:flex-row gap-6 items-end">
+              <div className="flex-1">
+                <label className="block text-sm font-bold text-gray-700 mb-3">
+                  Select Country
+                </label>
+                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                  <SelectTrigger className="w-full h-12 text-lg border-2 border-purple-200 focus:border-purple-500 bg-white shadow-md rounded-lg">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60 bg-white border-purple-200">
+                    {countries.map((country) => (
+                      <SelectItem key={country.code} value={country.code} className="text-lg py-3 hover:bg-purple-50">
+                        {country.name} ({country.prefix})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={copyToClipboard}
-                className="ml-6 border-2 border-purple-300 hover:bg-purple-100 text-purple-700 font-bold shadow-md"
+              <Button 
+                onClick={handleGenerateNumber} 
+                disabled={isGenerating}
+                className="w-full sm:w-auto px-10 h-12 text-lg bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 hover:from-purple-700 hover:via-pink-700 hover:to-red-600 text-white font-bold shadow-lg transform transition-all duration-200 hover:scale-105"
               >
-                {copied ? (
+                {isGenerating ? (
                   <>
-                    <Check className="h-5 w-5 mr-2 text-green-600" />
-                    Copied!
+                    <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
+                    Generating...
                   </>
                 ) : (
-                  <>
-                    <Copy className="h-5 w-5 mr-2" />
-                    Copy
-                  </>
+                  'Generate Number'
                 )}
               </Button>
             </div>
-            
-            <CountdownTimer 
-              expiresAt={generatedNumber.expiresAt} 
-              onExpired={handleExpired}
-            />
-            
-            <div className="text-sm text-blue-700 bg-gradient-to-r from-blue-100 to-purple-100 p-4 rounded-xl border-2 border-blue-300 shadow-md">
-              <strong>📱 SMS Only:</strong> This number can only receive SMS messages, not phone calls. 
-              All incoming messages will appear in the inbox below.
-            </div>
           </CardContent>
         </Card>
-      )}
 
-      {/* Messages Inbox */}
-      {generatedNumber && (
-        <MessageInbox messages={messages} />
-      )}
+        {/* Generated Number Display */}
+        {generatedNumber && (
+          <Card className="shadow-xl border-0 bg-gradient-to-br from-white via-green-50 to-blue-50">
+            <CardHeader className="bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 rounded-t-lg text-white">
+              <CardTitle className="flex items-center justify-between">
+                <span className="text-xl font-bold">Your Temporary Number</span>
+                <Badge variant="outline" className="bg-white text-green-600 border-white px-4 py-1 font-bold">
+                  ✅ Active
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 p-8">
+              <div className="flex items-center justify-between p-6 bg-gradient-to-r from-gray-50 via-blue-50 to-purple-50 rounded-xl border-2 border-blue-200 shadow-md">
+                <div>
+                  <div className="text-3xl font-mono font-bold text-gray-900 mb-2">
+                    {generatedNumber.number}
+                  </div>
+                  <div className="text-lg text-purple-600 font-semibold">
+                    {selectedCountryData?.name} ({selectedCountryData?.prefix})
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={copyToClipboard}
+                  className="ml-6 border-2 border-purple-300 hover:bg-purple-100 text-purple-700 font-bold shadow-md"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-5 w-5 mr-2 text-green-600" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-5 w-5 mr-2" />
+                      Copy
+                    </>
+                  )}
+                </Button>
+              </div>
+              
+              <CountdownTimer 
+                expiresAt={generatedNumber.expiresAt} 
+                onExpired={handleExpired}
+              />
+              
+              <div className="text-sm text-blue-700 bg-gradient-to-r from-blue-100 to-purple-100 p-4 rounded-xl border-2 border-blue-300 shadow-md">
+                <strong>📱 SMS Only:</strong> This number can only receive SMS messages, not phone calls. 
+                All incoming messages will appear in the inbox below.
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Messages Inbox */}
+        {generatedNumber && (
+          <MessageInbox messages={messages} />
+        )}
+      </div>
     </div>
   );
 };
