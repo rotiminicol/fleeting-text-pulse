@@ -38,8 +38,9 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ expiresAt, onExpired })
   }, [expiresAt, onExpired]);
 
   const formatTime = (ms: number) => {
-    const minutes = Math.floor(ms / (1000 * 60));
-    const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
@@ -49,28 +50,34 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ expiresAt, onExpired })
     return 'bg-red-500';
   };
 
+  const getTimerColor = () => {
+    if (progress > 50) return 'text-green-700';
+    if (progress > 25) return 'text-yellow-700';
+    return 'text-red-700';
+  };
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border-2 border-gray-100">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-          <Clock className="h-4 w-4" />
+        <div className="flex items-center gap-3 text-lg font-semibold text-gray-700">
+          <Clock className="h-6 w-6" />
           Time Remaining
         </div>
-        <div className="text-lg font-mono font-bold text-gray-900">
+        <div className={`text-2xl font-mono font-bold ${getTimerColor()}`}>
           {formatTime(timeLeft)}
         </div>
       </div>
       
       <div className="relative">
-        <Progress value={progress} className="h-3" />
+        <Progress value={progress} className="h-4" />
         <div 
-          className={`absolute top-0 left-0 h-3 rounded-full transition-all duration-1000 ${getProgressColor()}`}
+          className={`absolute top-0 left-0 h-4 rounded-full transition-all duration-1000 ${getProgressColor()}`}
           style={{ width: `${progress}%` }}
         />
       </div>
       
-      <div className="text-xs text-gray-500 text-center">
-        Expires at {expiresAt.toLocaleTimeString()}
+      <div className="text-sm text-gray-600 text-center bg-white p-3 rounded-lg border border-gray-200">
+        <strong>⏰ Expires at:</strong> {expiresAt.toLocaleTimeString()} on {expiresAt.toLocaleDateString()}
       </div>
     </div>
   );

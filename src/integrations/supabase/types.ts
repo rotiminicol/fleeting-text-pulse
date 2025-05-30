@@ -9,13 +9,71 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      phone_numbers: {
+        Row: {
+          country: string
+          created_at: string
+          expires_at: string
+          id: string
+          number: string
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          number: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          number?: string
+        }
+        Relationships: []
+      }
+      sms_messages: {
+        Row: {
+          content: string
+          from_number: string
+          id: string
+          phone_number_id: string | null
+          received_at: string
+        }
+        Insert: {
+          content: string
+          from_number: string
+          id?: string
+          phone_number_id?: string | null
+          received_at?: string
+        }
+        Update: {
+          content?: string
+          from_number?: string
+          id?: string
+          phone_number_id?: string | null
+          received_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_messages_phone_number_id_fkey"
+            columns: ["phone_number_id"]
+            isOneToOne: false
+            referencedRelation: "phone_numbers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_numbers: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
