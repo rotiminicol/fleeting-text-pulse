@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { Client } from 'https://esm.sh/twilio@4.13.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,6 +9,12 @@ const corsHeaders = {
 interface PhoneRequest {
   country: string;
 }
+
+// Initialize Twilio client
+const twilioClient = Client(
+  Deno.env.get('TWILIO_ACCOUNT_SID') ?? '',
+  Deno.env.get('TWILIO_AUTH_TOKEN') ?? ''
+);
 
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
@@ -23,12 +30,32 @@ Deno.serve(async (req) => {
 
     const { country }: PhoneRequest = await req.json();
     
-    // Generate phone number
-    const phoneNumber = generatePhoneNumber(country);
+    // Get a real phone number from Twilio
+    const { data: twilioNumber, error: twilioError } = await supabase
+      .from('twilio_numbers')
+      .select('phone_number')
+      .eq('country_code', country)
+      .eq('available', true)
+      .limit(1)
+      .single();
+
+    if (twilioError || !twilioNumber) {
+      return new Response(JSON.stringify({ error: 'No available phone numbers in this country' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const phoneNumber = twilioNumber.phone_number;
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
     
     // Clean up expired numbers first
     await supabase.from('phone_numbers').delete().lt('expires_at', new Date().toISOString());
+    
+    // Mark the number as unavailable
+    await supabase.from('twilio_numbers')
+      .update({ available: false })
+      .eq('phone_number', phoneNumber);
     
     // Insert new phone number
     const { data, error } = await supabase
@@ -49,10 +76,43 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Simulate receiving a message after 5 seconds
-    setTimeout(async () => {
-      await simulateMessage(supabase, data.id);
-    }, 5000);
+    // Generate OTP and send to inbox
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    try {
+      // Send a generic SMS
+      const message = await twilioClient.messages.create({
+        body: `Your verification code has been sent to your inbox. It will expire in 5 minutes.`,
+        from: Deno.env.get('TWILIO_PHONE_NUMBER') ?? '',
+        to: data.number
+      });
+
+      console.log('SMS sent successfully:', message.sid);
+
+      // Send OTP directly to inbox
+      await supabase.from('messages').insert({
+        phone_number_id: data.id,
+        content: `Your verification code is: ${otp}. This code will expire in 5 minutes.`,
+        received_at: new Date().toISOString()
+      });
+
+      // Return the OTP in the response
+      return new Response(JSON.stringify({
+        id: data.id,
+        number: data.number,
+        country: data.country,
+        expiresAt: data.expires_at,
+        otp: otp
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+      return new Response(JSON.stringify({ error: 'Failed to send SMS' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     return new Response(JSON.stringify({
       id: data.id,
